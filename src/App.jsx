@@ -1,51 +1,42 @@
-import React, { createContext, useState } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
+import { AuthProvider } from './contexts/AuthContext';
 import Login from './components/Login';
+import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
-
-export const AuthContext = createContext(null);
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
-
-  const login = (userData) => {
-    setIsAuthenticated(true);
-    setUser(userData);
-  };
-
-  const logout = () => {
-    setIsAuthenticated(false);
-    setUser(null);
-  };
+  const [showLogin, setShowLogin] = useState(true);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthProvider>
       <Router>
         <div className="App">
-          <h1>Family Tree Manager</h1>
           <Routes>
             <Route 
               path="/" 
               element={
-                !isAuthenticated ? 
-                <Login /> : 
-                <Navigate to="/dashboard" />
+                showLogin ? (
+                  <Login onSwitchToSignup={() => setShowLogin(false)} />
+                ) : (
+                  <Signup onSwitchToLogin={() => setShowLogin(true)} />
+                )
               } 
             />
             <Route 
               path="/dashboard" 
               element={
-                isAuthenticated ? 
-                <Dashboard /> : 
-                <Navigate to="/" />
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
               } 
             />
           </Routes>
         </div>
       </Router>
-    </AuthContext.Provider>
+    </AuthProvider>
   );
 }
 
