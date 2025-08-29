@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
+import React from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 const Dashboard = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { currentUser, logout } = useAuth();
 
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h2>Welcome, {user?.name}</h2>
+        <h2>Welcome, {currentUser?.name}</h2>
         <button onClick={logout} className="logout-btn">Logout</button>
       </div>
       <div className="dashboard-content">
